@@ -1,0 +1,343 @@
+{
+  "report": "REVIEW_UIT_QSPI.md",
+  "findings": [
+    {
+      "id": "F-008",
+      "severity": "Major",
+      "label": "FACT",
+      "locator": "§1.1, §2, §3 (ASM-015), §6.4.1",
+      "cells": [
+        "F-008",
+        "Major",
+        "§1.1, §2, §3 (ASM-015), §6.4.1",
+        "FACT: Serial PSRAM is claimed as supported, but there are no memory-mapped writes and CSN can stay low without limit, violating PSRAM tCEM",
+        "PSRAM được công bố là hỗ trợ, nhưng không có ghi memory-mapped và CSN có thể giữ mức thấp vô hạn, vi phạm tCEM của PSRAM",
+        "Either remove PSRAM from §1.1 and §2, or add memory-mapped write support plus a DLY-like maximum CSN-low counter that ends the frame at a byte boundary and restarts it."
+      ]
+    },
+    {
+      "id": "F-004",
+      "severity": "Major",
+      "label": "INFERENCE",
+      "locator": "§6.6.2, Table 6-14, Table 6-10, Table 8-3",
+      "cells": [
+        "F-004",
+        "Major",
+        "§6.6.2, Table 6-14, Table 6-10, Table 8-3",
+        "INFERENCE: PRESCALER legality rules look stale after the V2.0 formula change: odd values are rejected in SDR and DDR allows only 2, 6, 10, ...",
+        "Quy tắc hợp lệ của PRESCALER có vẻ còn từ công thức cũ trước V2.0: giá trị lẻ bị từ chối ở SDR, DDR chỉ cho 2, 6, 10, ...",
+        "Accept every PRESCALER in SDR (1..255, 0 kept as F/2) and every even PRESCALER >= 2 in DDR (with the F-001 midpoint launch); update the TEF check in m_qspi_reg_cfg, Table 6-10, Table 6-14 and Table 8-3."
+      ]
+    },
+    {
+      "id": "F-021",
+      "severity": "Observation",
+      "label": "FACT",
+      "locator": "§6.4.6, §6.6.3, Table 8-19",
+      "cells": [
+        "F-021",
+        "Observation",
+        "§6.4.6, §6.6.3, Table 8-19",
+        "FACT: Abort raises CSN mid-byte without the CSN hold time and reports the same TCF as a normal completion",
+        "Abort kéo CSN lên giữa byte không có CSN hold time và báo cùng TCF như hoàn tất bình thường",
+        "Waive: Same behaviour as STM32 QUADSPI; software knows it issued the abort."
+      ]
+    },
+    {
+      "id": "F-006",
+      "severity": "Major",
+      "label": "FACT",
+      "locator": "§1.2, Table 7-3, Table 11-4 (ASM-003)",
+      "cells": [
+        "F-006",
+        "Major",
+        "§1.2, Table 7-3, Table 11-4 (ASM-003)",
+        "FACT: The AHB-Lite subordinate has no HREADY input and relies on the interconnect gating HSEL, a deviation from AMBA AHB (IHI 0033C)",
+        "AHB-Lite subordinate không có input HREADY và dựa vào interconnect để gate HSEL, lệch khỏi AMBA AHB (IHI 0033C)",
+        "Add input i_qspi_ahb_hready and accept an address phase only when HSEL & HREADY & HTRANS[1]; drop ASM-003 from Table 11-4."
+      ]
+    },
+    {
+      "id": "F-022",
+      "severity": "Observation",
+      "label": "FACT",
+      "locator": "§7.4, Table 7-4 (ASM-005)",
+      "cells": [
+        "F-022",
+        "Observation",
+        "§7.4, Table 7-4 (ASM-005)",
+        "FACT: The DMA req/clr handshake is custom and the target DMA controller is not named",
+        "Handshake DMA req/clr là tùy biến và DMA controller đích không được nêu",
+        "Waive: The handshake is fully specified and the integrator duty is in Table 11-4."
+      ]
+    },
+    {
+      "id": "F-012",
+      "severity": "Minor",
+      "label": "INFERENCE",
+      "locator": "Table 6-2 CDC-005 (ASM-007)",
+      "cells": [
+        "F-012",
+        "Minor",
+        "Table 6-2 CDC-005 (ASM-007)",
+        "INFERENCE: DCR.FSIZE and the memory-mapped enable cross to HCLK through per-bit 2-flop synchronizers, safe only under a software rule",
+        "DCR.FSIZE và memory-mapped enable sang HCLK qua 2-flop synchronizer từng bit, chỉ an toàn nhờ quy tắc phần mềm",
+        "Carry FSIZE with the enable through a request/acknowledge handshake (data held in the clk domain, captured in HCLK on the synchronized toggle), or hold memory-mapped mode off in HCLK until the new FSIZE is stable."
+      ]
+    },
+    {
+      "id": "F-013",
+      "severity": "Minor",
+      "label": "INFERENCE",
+      "locator": "§6.2, Table 6-3 (ASM-002, ASM-012, ASM-014)",
+      "cells": [
+        "F-013",
+        "Minor",
+        "§6.2, Table 6-3 (ASM-002, ASM-012, ASM-014)",
+        "INFERENCE: Reset assumptions conflict and no RDC analysis is given for the four reset domains",
+        "Các giả định reset mâu thuẫn và không có phân tích RDC cho bốn reset domain",
+        "Add an RDC table: each crossing, its two resets, the state at release in each order, and why no spurious word or pulse is produced; reconcile ASM-002 with the core-in-reset sentences."
+      ]
+    },
+    {
+      "id": "F-023",
+      "severity": "Observation",
+      "label": "FACT",
+      "locator": "Table 5-1 rows 6, 13, 14; §7.3",
+      "cells": [
+        "F-023",
+        "Observation",
+        "Table 5-1 rows 6, 13, 14; §7.3",
+        "FACT: PARA_AHB_SYNC_FIFO_DEPTH sizes async FIFOs, and the IP subtracts base addresses that an interconnect normally removes",
+        "PARA_AHB_SYNC_FIFO_DEPTH thực chất là độ sâu async FIFO, và IP tự trừ base address vốn thường do interconnect xử lý",
+        "Waive: Defaults of 0 remove the subtractor's effect and the wrap case is documented."
+      ]
+    },
+    {
+      "id": "F-001",
+      "severity": "Blocker",
+      "label": "INFERENCE",
+      "locator": "§7.6, Table 6-15, §11.2",
+      "cells": [
+        "F-001",
+        "Blocker",
+        "§7.6, Table 6-15, §11.2",
+        "INFERENCE: DDR output data changes on the same clk edge as every SCLK edge, so the flash sees zero hold time on address, alternate and data bits",
+        "Dữ liệu ra ở DDR đổi trạng thái cùng clk edge với mọi SCLK edge, flash nhận hold time bằng 0 cho address, alternate và data",
+        "In m_qspi_edge_sel add a DDR launch strobe at the middle of each SCLK half period (a quarter SCLK period after the edge) and use it to load the output register in DDR write phases; restrict DDR to an even PRESCALER >= 2 so the midpoint is an integer clk count; constrain the DDR falling edge in the SDC."
+      ]
+    },
+    {
+      "id": "F-003",
+      "severity": "Major",
+      "label": "FACT",
+      "locator": "§11.2, Table 11-2",
+      "cells": [
+        "F-003",
+        "Major",
+        "§11.2, Table 11-2",
+        "FACT: Pad IO delays are 40 % placeholders of the fastest SCLK period and the DDR falling edge is unconstrained, so synthesis cannot reveal F-001 or F-002",
+        "IO delay của pad là placeholder 40 % chu kỳ SCLK nhanh nhất và cạnh xuống DDR không được constrain, nên synthesis không phát hiện được F-001, F-002",
+        "Write the pad budget from a named flash (tCLQV, tDS/tDH, tCSS/tCSH) plus pad and board delays; add set_output_delay -clock_fall for DDR; state the SCLK limit the budget closes for SDR read, SDR write and DDR."
+      ]
+    },
+    {
+      "id": "F-014",
+      "severity": "Minor",
+      "label": "INFERENCE",
+      "locator": "Table 11-3 EXC-001, EXC-002",
+      "cells": [
+        "F-014",
+        "Minor",
+        "Table 11-3 EXC-001, EXC-002",
+        "INFERENCE: set_clock_groups -allow_paths is tool-specific and the Gray-pointer crossings have no skew constraint",
+        "set_clock_groups -allow_paths phụ thuộc tool và các crossing Gray pointer không có ràng buộc skew",
+        "State the STA tool; use set_max_delay -ignore_clock_latency (or -datapath_only) and add a skew constraint (set_data_check or set_bus_skew) on each Gray pointer bus."
+      ]
+    },
+    {
+      "id": "F-019",
+      "severity": "Major",
+      "label": "INFERENCE",
+      "locator": "§11.1, §6.10, Table 5-1",
+      "cells": [
+        "F-019",
+        "Major",
+        "§11.1, §6.10, Table 5-1",
+        "INFERENCE: No area or power figure; the reviewer proxy is about 4.4k flops, with the TX/RX FIFOs about 46 % while the XIP cache is 8 words",
+        "Không có số liệu diện tích hay công suất; proxy của reviewer khoảng 4.4k flop, TX/RX FIFO chiếm khoảng 46 % trong khi cache XIP chỉ 8 word",
+        "Add an area/power table (proxy now, mapped with the UIT Tesla library later), allow synthesis clock-gating insertion, and reconsider 32-word FIFOs against a larger XIP cache for UIT Tesla."
+      ]
+    },
+    {
+      "id": "F-002",
+      "severity": "Major",
+      "label": "INFERENCE",
+      "locator": "§3, Table 6-15, §11.2",
+      "cells": [
+        "F-002",
+        "Major",
+        "§3, Table 6-15, §11.2",
+        "INFERENCE: Read data is always captured half an SCLK period after the flash launch, with no sample shift or delay, so F/2 and probably F/4 reads cannot close",
+        "Dữ liệu đọc luôn được capture sau nửa chu kỳ SCLK, không có sample shift hay delay, nên đọc ở F/2 và có thể F/4 không đạt timing",
+        "Add a CR.SSHIFT-like field (or a 3-bit DCR sample-delay in clk cycles) that delays the sample strobe of read phases by 1..N clk cycles, and state the maximum read SCLK per delay setting in §6.6.2."
+      ]
+    },
+    {
+      "id": "F-005",
+      "severity": "Major",
+      "label": "INFERENCE",
+      "locator": "§6.4.3, §6.9, DEC-016, DEC-030",
+      "cells": [
+        "F-005",
+        "Major",
+        "§6.4.3, §6.9, DEC-016, DEC-030",
+        "INFERENCE: The XIP cache is a single 32-byte stream buffer: every miss invalidates all lines, a NONSEQ miss fetches one word, HBURST is ignored and miss latency is not quantified",
+        "Cache XIP thực chất là một stream buffer 32 byte: mỗi miss invalidate toàn bộ line, miss NONSEQ chỉ fetch 1 word, bỏ qua HBURST, và latency miss không được định lượng",
+        "Fetch an aligned block (PARA_PREFETCH_LENGTH words) on every miss, NONSEQ included, using HBURST to size it; replace invalidate-all with a FIFO or LRU replacement of aligned blocks; add a latency table (hit, NONSEQ miss, SEQ miss) to §6.4.3."
+      ]
+    },
+    {
+      "id": "F-017",
+      "severity": "Minor",
+      "label": "FACT",
+      "locator": "§8.1, §7.2, §9.7",
+      "cells": [
+        "F-017",
+        "Minor",
+        "§8.1, §7.2, §9.7",
+        "FACT: Writes to BUSY-locked fields are silently dropped with no flag",
+        "Ghi vào field bị khóa khi BUSY bị bỏ qua âm thầm, không có flag",
+        "Add a sticky SR.WLKF (write-locked) flag, cleared through FCR, set when a write hits a BUSY-locked field."
+      ]
+    },
+    {
+      "id": "F-018",
+      "severity": "Minor",
+      "label": "FACT",
+      "locator": "§6.4.4, §9.3 (DEC-029, ASM-013)",
+      "cells": [
+        "F-018",
+        "Minor",
+        "§6.4.4, §9.3 (DEC-029, ASM-013)",
+        "FACT: DMA moves whole bursts only; the CPU must move the residue and a DMA channel programmed for it waits forever",
+        "DMA chỉ chuyển trọn burst; CPU phải chuyển phần dư và kênh DMA lập trình cho phần dư sẽ chờ mãi",
+        "Raise the request for the last partial burst when the remaining words are fewer than the threshold (TX: remaining bytes to write; RX: frame complete and RX FIFO not empty), with the DMA programmed by word count."
+      ]
+    },
+    {
+      "id": "F-020",
+      "severity": "Minor",
+      "label": "INFERENCE",
+      "locator": "§3, Table 11-4 (DEC-021)",
+      "cells": [
+        "F-020",
+        "Minor",
+        "§3, Table 11-4 (DEC-021)",
+        "INFERENCE: The DFT contract for the four clocks, four async resets and the pad capture flop is not written",
+        "Chưa viết DFT contract cho bốn clock, bốn async reset và flop capture của pad",
+        "Add a DFT table: reset controllability, clock sources in scan mode, synchronizer handling, pad IO in scan mode, expected coverage exclusions."
+      ]
+    },
+    {
+      "id": "F-015",
+      "severity": "Minor",
+      "label": "FACT",
+      "locator": "§3, §7.2, Table 11-4 (DEC-020)",
+      "cells": [
+        "F-015",
+        "Minor",
+        "§3, §7.2, Table 11-4 (DEC-020)",
+        "FACT: No APB timeout: an APB access while i_qspi_clk is stopped or in reset hangs the CPU bus",
+        "Không có APB timeout: truy cập APB khi i_qspi_clk dừng hoặc đang reset sẽ treo bus CPU",
+        "Waive: DEC-020 is a closed decision and the CRM rule in Table 11-4 removes the trigger."
+      ]
+    },
+    {
+      "id": "F-016",
+      "severity": "Minor",
+      "label": "FACT",
+      "locator": "§3, §1.1",
+      "cells": [
+        "F-016",
+        "Minor",
+        "§3, §1.1",
+        "FACT: No access control, register lock or integrity check on the boot/XIP path",
+        "Không có access control, khóa thanh ghi hay kiểm tra toàn vẹn trên đường boot/XIP",
+        "Waive: The exclusion is stated, and UIT Tesla states no secure-boot or untrusted-manager requirement."
+      ]
+    },
+    {
+      "id": "F-011",
+      "severity": "Major",
+      "label": "FACT",
+      "locator": "§10, Table 10-1",
+      "cells": [
+        "F-011",
+        "Major",
+        "§10, Table 10-1",
+        "FACT: No requirement-to-test traceability, no coverage plan, no flash model named and no verification result; sim/ and lint/ are empty",
+        "Không có truy vết requirement-test, không có coverage plan, không nêu flash model và không có kết quả kiểm chứng; sim/ và lint/ trống",
+        "Give each §10 bullet a TEST-nnn ID mapped to REQ-nnn, name the flash model and require it to check tDS/tDH and tCLQV, list functional coverage bins, and add the regression status per configuration of Table 10-1."
+      ]
+    },
+    {
+      "id": "F-009",
+      "severity": "Major",
+      "label": "FACT",
+      "locator": "Table 6-1, Table 11-2, §9.6, Table 11-4",
+      "cells": [
+        "F-009",
+        "Major",
+        "Table 6-1, Table 11-2, §9.6, Table 11-4",
+        "FACT: Clock frequencies conflict: all clocks are 200 MHz in Table 6-1/11-2, but §9.6 and Table 11-4 use HCLK = 100 MHz and i_qspi_clk = 5 MHz; PRESCALER <= 54 gives 108, not 110, clk cycles",
+        "Tần số clock mâu thuẫn: Table 6-1/11-2 ghi 200 MHz, nhưng §9.6 và Table 11-4 dùng HCLK = 100 MHz và i_qspi_clk = 5 MHz; PRESCALER <= 54 cho 108 chứ không phải 110 chu kỳ clk",
+        "State one UIT Tesla delivery clock plan, recompute the AHB timeout and the memory-mapped PRESCALER limit from it with the frame length used, and correct the 110/108 arithmetic."
+      ]
+    },
+    {
+      "id": "F-010",
+      "severity": "Major",
+      "label": "FACT",
+      "locator": "Table 1-1, §4, §5, §8, Appendix B",
+      "cells": [
+        "F-010",
+        "Major",
+        "Table 1-1, §4, §5, §8, Appendix B",
+        "FACT: REF-002/006/008, the source design specification and 32 cited DEC/ASM/DEP items are not defined in the document; no requirement IDs; the review table is empty",
+        "REF-002/006/008, tài liệu design specification nguồn và 32 mục DEC/ASM/DEP được trích dẫn nhưng không định nghĩa trong tài liệu; không có requirement ID; bảng review trống",
+        "Add REF-002/006/008 and UIT-Tesla-QSPI-SPEC v0.2 to Table 1-1, append DEC/ASM/DEP tables with status and owner, add REQ-nnn IDs to normative statements, and set the title to V2.0."
+      ]
+    },
+    {
+      "id": "F-007",
+      "severity": "Major",
+      "label": "FACT",
+      "locator": "Table 11-4 (XIP bus row)",
+      "cells": [
+        "F-007",
+        "Major",
+        "Table 11-4 (XIP bus row)",
+        "FACT: UIT Tesla provides an AXI XIP connection but the IP has an AHB-Lite port; the required bridge is not specified",
+        "UIT Tesla cung cấp kết nối XIP AXI nhưng IP chỉ có cổng AHB-Lite; bridge cần thiết chưa được đặc tả",
+        "Add a section that names the AXI-to-AHB-Lite bridge (or an AXI4 subordinate option), its owner, burst/WRAP conversion, response mapping, outstanding count and added latency."
+      ]
+    },
+    {
+      "id": "F-024",
+      "severity": "Observation",
+      "label": "INFERENCE",
+      "locator": "§8.2 Table 8-2, Table 8-3, Table 8-15",
+      "cells": [
+        "F-024",
+        "Observation",
+        "§8.2 Table 8-2, Table 8-3, Table 8-15",
+        "INFERENCE: Register offsets mirror STM32 QUADSPI but bit positions and PTR meaning differ, and its SSHIFT/DHQC timing features are absent",
+        "Offset thanh ghi giống STM32 QUADSPI nhưng vị trí bit và ý nghĩa PTR khác, và thiếu các tính năng timing SSHIFT/DHQC",
+        "State in §8 that the map is STM32-inspired but not compatible, list the differences, and adopt the sample-shift and DDR-hold fields of F-001/F-002."
+      ]
+    }
+  ],
+  "matrix_rows": 0,
+  "matrix_non_match": 0
+}

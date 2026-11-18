@@ -1,0 +1,586 @@
+{
+  "spec": "/home/khaitm2/UIT-Tesla/rtl/qspi/doc/UIT_QSPI_Specification.md",
+  "front_matter": {},
+  "sections": [
+    {
+      "level": 2,
+      "title": "Contents",
+      "chars": 4787,
+      "tables": 0,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 2,
+      "title": "Reversion and History",
+      "chars": 1236,
+      "tables": 1,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 2,
+      "title": "Table of Tables",
+      "chars": 2072,
+      "tables": 0,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 2,
+      "title": "Table of Figures",
+      "chars": 1566,
+      "tables": 0,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": [
+        "1 Byte",
+        "2 Bytes",
+        "4 Bytes"
+      ]
+    },
+    {
+      "level": 2,
+      "title": "1. Overview",
+      "chars": 0,
+      "tables": 0,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 3,
+      "title": "1.1. Introduction",
+      "chars": 2694,
+      "tables": 1,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 3,
+      "title": "1.2. Compliances",
+      "chars": 822,
+      "tables": 0,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 2,
+      "title": "2. Supported Features",
+      "chars": 1929,
+      "tables": 0,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": [
+        "1 byte"
+      ]
+    },
+    {
+      "level": 2,
+      "title": "3. Unsupported Features",
+      "chars": 1014,
+      "tables": 0,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 2,
+      "title": "4. Block Diagram",
+      "chars": 6460,
+      "tables": 2,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 2,
+      "title": "5. Parameters",
+      "chars": 3433,
+      "tables": 2,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 2,
+      "title": "6. Functions",
+      "chars": 0,
+      "tables": 0,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 3,
+      "title": "6.1. Clock",
+      "chars": 2541,
+      "tables": 2,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": [
+        "200 MHz"
+      ]
+    },
+    {
+      "level": 3,
+      "title": "6.2. Reset",
+      "chars": 1890,
+      "tables": 1,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 3,
+      "title": "6.3. Frame Format",
+      "chars": 5120,
+      "tables": 4,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": [
+        "1 bit",
+        "1 bytes",
+        "32 bits",
+        "4 bytes",
+        "8 bits"
+      ]
+    },
+    {
+      "level": 3,
+      "title": "6.4. Functional Modes",
+      "chars": 8947,
+      "tables": 3,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": [
+        "1 bytes"
+      ]
+    },
+    {
+      "level": 3,
+      "title": "6.5. Command Sequencer",
+      "chars": 5421,
+      "tables": 2,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": [
+        "1 byte",
+        "1 bytes"
+      ]
+    },
+    {
+      "level": 3,
+      "title": "6.6. Clock Manager",
+      "chars": 9749,
+      "tables": 6,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 3,
+      "title": "6.7. Shifter",
+      "chars": 11685,
+      "tables": 7,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": [
+        "1 Byte",
+        "2 Bytes",
+        "32 bits",
+        "4 Bytes",
+        "4 bits"
+      ]
+    },
+    {
+      "level": 3,
+      "title": "6.8. Polling Status Control",
+      "chars": 1101,
+      "tables": 1,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 3,
+      "title": "6.9. AHB-Lite Interface and Cache",
+      "chars": 907,
+      "tables": 0,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 3,
+      "title": "6.10. Memory-Mapped Control and FIFO",
+      "chars": 724,
+      "tables": 0,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": [
+        "32 bits"
+      ]
+    },
+    {
+      "level": 2,
+      "title": "7. Interfaces",
+      "chars": 114,
+      "tables": 0,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 3,
+      "title": "7.1. Clock and Reset Interface",
+      "chars": 589,
+      "tables": 1,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 3,
+      "title": "7.2. APB Interface",
+      "chars": 1282,
+      "tables": 1,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 3,
+      "title": "7.3. AHB-Lite Interface",
+      "chars": 1273,
+      "tables": 1,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 3,
+      "title": "7.4. DMA Interface",
+      "chars": 615,
+      "tables": 1,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 3,
+      "title": "7.5. Interrupt Interface",
+      "chars": 349,
+      "tables": 1,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 3,
+      "title": "7.6. QSPI Pad Interface",
+      "chars": 893,
+      "tables": 1,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 2,
+      "title": "8. Registers",
+      "chars": 347,
+      "tables": 0,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 3,
+      "title": "8.1. Register Symbol",
+      "chars": 988,
+      "tables": 1,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 3,
+      "title": "8.2. Register Table",
+      "chars": 10666,
+      "tables": 18,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": [
+        "1 bytes"
+      ]
+    },
+    {
+      "level": 2,
+      "title": "9. Operation",
+      "chars": 0,
+      "tables": 0,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 3,
+      "title": "9.1. Initial Sequence",
+      "chars": 433,
+      "tables": 0,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 3,
+      "title": "9.2. Interrupt Sequence",
+      "chars": 709,
+      "tables": 0,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 3,
+      "title": "9.3. DMA Sequence",
+      "chars": 1140,
+      "tables": 0,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 3,
+      "title": "9.4. Indirect Write and Read by CPU",
+      "chars": 475,
+      "tables": 0,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 3,
+      "title": "9.5. Automatic Status Polling Sequence",
+      "chars": 498,
+      "tables": 0,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 3,
+      "title": "9.6. Memory-Mapped Sequence",
+      "chars": 548,
+      "tables": 0,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": [
+        "100 MHz",
+        "5 MHz"
+      ]
+    },
+    {
+      "level": 3,
+      "title": "9.7. Abort and Recovery Sequence",
+      "chars": 371,
+      "tables": 0,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 2,
+      "title": "10. Verification Notes",
+      "chars": 4166,
+      "tables": 1,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": [
+        "1 cycle",
+        "9 bytes"
+      ]
+    },
+    {
+      "level": 2,
+      "title": "11. Integration",
+      "chars": 0,
+      "tables": 0,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 3,
+      "title": "11.1. Primitive Modules",
+      "chars": 838,
+      "tables": 1,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 3,
+      "title": "11.2. SDC Constraint",
+      "chars": 2235,
+      "tables": 2,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": [
+        "200 MHz"
+      ]
+    },
+    {
+      "level": 3,
+      "title": "11.3. Integration Notes",
+      "chars": 1806,
+      "tables": 1,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": [
+        "100 MHz"
+      ]
+    },
+    {
+      "level": 2,
+      "title": "Appendix A. Acronyms",
+      "chars": 1163,
+      "tables": 1,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    },
+    {
+      "level": 2,
+      "title": "Appendix B. Review",
+      "chars": 101,
+      "tables": 1,
+      "req_ids": [],
+      "tests": [],
+      "properties": [],
+      "quantified": []
+    }
+  ],
+  "requirements": {},
+  "traceability": {},
+  "requirement_areas": {},
+  "open_items": [
+    "ASM-002",
+    "ASM-003",
+    "ASM-004",
+    "ASM-005",
+    "ASM-007",
+    "ASM-010",
+    "ASM-011",
+    "ASM-012",
+    "ASM-013",
+    "ASM-014",
+    "ASM-015",
+    "DEP-001",
+    "DEP-009",
+    "DEP-011"
+  ],
+  "decisions": [
+    "DEC-003",
+    "DEC-012",
+    "DEC-013",
+    "DEC-014",
+    "DEC-016",
+    "DEC-020",
+    "DEC-021",
+    "DEC-022",
+    "DEC-024",
+    "DEC-027",
+    "DEC-029",
+    "DEC-030",
+    "DEC-034",
+    "DEC-036",
+    "DEC-038",
+    "DEC-042",
+    "DEC-043",
+    "DEC-044"
+  ],
+  "tests": [],
+  "properties": [],
+  "quantified_claims": [
+    "1 Byte",
+    "1 bit",
+    "1 byte",
+    "1 bytes",
+    "1 cycle",
+    "100 MHz",
+    "2 Bytes",
+    "200 MHz",
+    "32 bits",
+    "4 Bytes",
+    "4 bits",
+    "4 bytes",
+    "5 MHz",
+    "8 bits",
+    "9 bytes"
+  ],
+  "coverage": {
+    "requirements": 0,
+    "tests": 0,
+    "properties": 0,
+    "requirements_without_test": [],
+    "requirements_without_verification": []
+  },
+  "counts": {
+    "sections": 47,
+    "tables": 64,
+    "open_items": 14,
+    "decisions": 18
+  }
+}

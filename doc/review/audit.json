@@ -1,0 +1,27 @@
+{
+  "schema": "vlsit-gate-audit/1",
+  "ratio": 0.1,
+  "sample": [
+    {
+      "id": "F-009",
+      "severity": "High",
+      "root_cause": "RC-2 V2.0 revision not propagated consistently",
+      "verdict": "",
+      "result": ""
+    },
+    {
+      "id": "F-003",
+      "severity": "High",
+      "root_cause": "RC-1 pad launch/capture timing not derived from flash AC timing",
+      "verdict": "",
+      "result": ""
+    },
+    {
+      "id": "F-010",
+      "severity": "High",
+      "root_cause": "RC-6 traceability absent",
+      "verdict": "",
+      "result": ""
+    }
+  ]
+}

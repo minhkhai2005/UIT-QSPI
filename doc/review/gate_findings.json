@@ -1,0 +1,268 @@
+{
+  "findings": [
+    {
+      "id": "F-001",
+      "severity": "Critical",
+      "verdict": "fix RTL",
+      "root_cause": "RC-1 pad launch/capture timing not derived from flash AC timing",
+      "evidence": "§7.6, Table 6-15, §11.2",
+      "owner": "",
+      "invalidation": "",
+      "risk": "",
+      "traced": true
+    },
+    {
+      "id": "F-002",
+      "severity": "High",
+      "verdict": "fix RTL",
+      "root_cause": "RC-1 pad launch/capture timing not derived from flash AC timing",
+      "evidence": "§3, Table 6-15, §11.2",
+      "owner": "",
+      "invalidation": "",
+      "risk": "",
+      "traced": true
+    },
+    {
+      "id": "F-003",
+      "severity": "High",
+      "verdict": "fix SDC",
+      "root_cause": "RC-1 pad launch/capture timing not derived from flash AC timing",
+      "evidence": "§11.2, Table 11-2",
+      "owner": "",
+      "invalidation": "",
+      "risk": "",
+      "traced": true
+    },
+    {
+      "id": "F-004",
+      "severity": "High",
+      "verdict": "fix RTL",
+      "root_cause": "RC-2 V2.0 revision not propagated consistently",
+      "evidence": "§6.6.2, Table 6-14, Table 6-10, Table 8-3",
+      "owner": "",
+      "invalidation": "",
+      "risk": "",
+      "traced": true
+    },
+    {
+      "id": "F-005",
+      "severity": "High",
+      "verdict": "fix RTL",
+      "root_cause": "RC-3 XIP path sized as a minimal stream buffer",
+      "evidence": "§6.4.3, §6.9, DEC-016, DEC-030",
+      "owner": "",
+      "invalidation": "",
+      "risk": "",
+      "traced": true
+    },
+    {
+      "id": "F-006",
+      "severity": "High",
+      "verdict": "fix RTL",
+      "root_cause": "RC-4 XIP bus contract does not match the UIT Tesla fabric",
+      "evidence": "§1.2, Table 7-3, Table 11-4 (ASM-003)",
+      "owner": "",
+      "invalidation": "",
+      "risk": "",
+      "traced": true
+    },
+    {
+      "id": "F-007",
+      "severity": "High",
+      "verdict": "fix HAS",
+      "root_cause": "RC-4 XIP bus contract does not match the UIT Tesla fabric",
+      "evidence": "Table 11-4 (XIP bus row)",
+      "owner": "",
+      "invalidation": "",
+      "risk": "",
+      "traced": true
+    },
+    {
+      "id": "F-008",
+      "severity": "High",
+      "verdict": "fix HAS",
+      "root_cause": "RC-5 feature claims exceed the specified behaviour",
+      "evidence": "§1.1, §2, §3 (ASM-015), §6.4.1",
+      "owner": "",
+      "invalidation": "",
+      "risk": "",
+      "traced": true
+    },
+    {
+      "id": "F-009",
+      "severity": "High",
+      "verdict": "fix HAS",
+      "root_cause": "RC-2 V2.0 revision not propagated consistently",
+      "evidence": "Table 6-1, Table 11-2, §9.6, Table 11-4",
+      "owner": "",
+      "invalidation": "",
+      "risk": "",
+      "traced": true
+    },
+    {
+      "id": "F-010",
+      "severity": "High",
+      "verdict": "fix HAS",
+      "root_cause": "RC-6 traceability absent",
+      "evidence": "Table 1-1, §4, §5, §8, Appendix B",
+      "owner": "",
+      "invalidation": "",
+      "risk": "",
+      "traced": true
+    },
+    {
+      "id": "F-011",
+      "severity": "High",
+      "verdict": "fix HAS",
+      "root_cause": "RC-6 traceability absent",
+      "evidence": "§10, Table 10-1",
+      "owner": "",
+      "invalidation": "",
+      "risk": "",
+      "traced": true
+    },
+    {
+      "id": "F-012",
+      "severity": "Medium",
+      "verdict": "fix RTL",
+      "root_cause": "RC-7 safety rests on unchecked assumptions",
+      "evidence": "Table 6-2 CDC-005 (ASM-007)",
+      "owner": "",
+      "invalidation": "",
+      "risk": "",
+      "traced": true
+    },
+    {
+      "id": "F-013",
+      "severity": "Medium",
+      "verdict": "fix HAS",
+      "root_cause": "RC-7 safety rests on unchecked assumptions",
+      "evidence": "§6.2, Table 6-3 (ASM-002, ASM-012, ASM-014)",
+      "owner": "",
+      "invalidation": "",
+      "risk": "",
+      "traced": true
+    },
+    {
+      "id": "F-014",
+      "severity": "Medium",
+      "verdict": "fix SDC",
+      "root_cause": "RC-8 CDC constraint portability",
+      "evidence": "Table 11-3 EXC-001, EXC-002",
+      "owner": "",
+      "invalidation": "",
+      "risk": "",
+      "traced": true
+    },
+    {
+      "id": "F-015",
+      "severity": "Medium",
+      "verdict": "waive",
+      "root_cause": "RC-7 safety rests on unchecked assumptions",
+      "evidence": "§3, §7.2, Table 11-4 (DEC-020)",
+      "owner": "UIT Tesla SoC integrator",
+      "invalidation": "The CRM can stop or reset i_qspi_clk while the CPU runs, or a watchdog is not present",
+      "risk": "CPU hang on a register access during clock stop or core reset",
+      "traced": true
+    },
+    {
+      "id": "F-016",
+      "severity": "Medium",
+      "verdict": "waive",
+      "root_cause": "RC-9 security stance",
+      "evidence": "§3, §1.1",
+      "owner": "UIT Tesla architecture lead",
+      "invalidation": "UIT Tesla adds secure boot, an untrusted bus manager or a safety target",
+      "risk": "Flash content can be erased or executed unchecked by any bus manager",
+      "traced": true
+    },
+    {
+      "id": "F-017",
+      "severity": "Medium",
+      "verdict": "fix RTL",
+      "root_cause": "RC-10 programming-model friction",
+      "evidence": "§8.1, §7.2, §9.7",
+      "owner": "",
+      "invalidation": "",
+      "risk": "",
+      "traced": true
+    },
+    {
+      "id": "F-018",
+      "severity": "Medium",
+      "verdict": "fix RTL",
+      "root_cause": "RC-7 safety rests on unchecked assumptions",
+      "evidence": "§6.4.4, §9.3 (DEC-029, ASM-013)",
+      "owner": "",
+      "invalidation": "",
+      "risk": "",
+      "traced": true
+    },
+    {
+      "id": "F-019",
+      "severity": "High",
+      "verdict": "fix HAS",
+      "root_cause": "RC-11 area and power not stated",
+      "evidence": "§11.1, §6.10, Table 5-1",
+      "owner": "",
+      "invalidation": "",
+      "risk": "",
+      "traced": true
+    },
+    {
+      "id": "F-020",
+      "severity": "Medium",
+      "verdict": "fix HAS",
+      "root_cause": "RC-12 DFT contract",
+      "evidence": "§3, Table 11-4 (DEC-021)",
+      "owner": "",
+      "invalidation": "",
+      "risk": "",
+      "traced": true
+    },
+    {
+      "id": "F-021",
+      "severity": "Low",
+      "verdict": "waive",
+      "root_cause": "RC-13 abort semantics",
+      "evidence": "§6.4.6, §6.6.3, Table 8-19",
+      "owner": "QSPI driver owner",
+      "invalidation": "An abort can be raised by hardware without software knowledge",
+      "risk": "Driver misreads an aborted transfer as complete",
+      "traced": true
+    },
+    {
+      "id": "F-022",
+      "severity": "Low",
+      "verdict": "waive",
+      "root_cause": "RC-4 XIP bus contract does not match the UIT Tesla fabric",
+      "evidence": "§7.4, Table 7-4 (ASM-005)",
+      "owner": "UIT Tesla SoC integrator",
+      "invalidation": "The UIT Tesla DMA controller uses another request protocol (for example single/burst requests)",
+      "risk": "DMA controller handshake mismatch",
+      "traced": true
+    },
+    {
+      "id": "F-023",
+      "severity": "Low",
+      "verdict": "waive",
+      "root_cause": "RC-14 parameter naming",
+      "evidence": "Table 5-1 rows 6, 13, 14; §7.3",
+      "owner": "QSPI RTL owner",
+      "invalidation": "A non-zero PARA_AHB_BASE_ADDRESS is used with FSIZE = 31",
+      "risk": "Wrong FIFO sizing by name; address alias at FSIZE = 31",
+      "traced": true
+    },
+    {
+      "id": "F-024",
+      "severity": "Low",
+      "verdict": "fix HAS",
+      "root_cause": "RC-1 pad launch/capture timing not derived from flash AC timing",
+      "evidence": "§8.2 Table 8-2, Table 8-3, Table 8-15",
+      "owner": "",
+      "invalidation": "",
+      "risk": "",
+      "traced": true
+    }
+  ]
+}

@@ -1,0 +1,357 @@
+{
+  "ip": "m_uit_qspi_wrap (UIT QSPI)",
+  "reviewed_spec": "rtl/qspi/doc/UIT_QSPI_Specification.md (HDS V2.0, 11/11/2026)",
+  "date": "2026-11-18",
+  "areas": [
+    {
+      "id": "application_fit",
+      "weight": 1.0,
+      "score": 3,
+      "justification": "Boot/XIP/program-erase use is clear (§1.1), but PSRAM is claimed without memory-mapped writes or tCEM control (F-008)."
+    },
+    {
+      "id": "features",
+      "weight": 1.0,
+      "score": 3,
+      "justification": "Feature list is explicit with an exclusion list (§2, §3); two advertised features (DDR, PSRAM) are not usable as specified (F-001, F-008)."
+    },
+    {
+      "id": "functions",
+      "weight": 1.5,
+      "score": 3,
+      "justification": "Cycle-level FSM tables and simulated waveforms for every block (§6.5-§6.8); PRESCALER legality rules are stale after the V2.0 formula change (F-004)."
+    },
+    {
+      "id": "interfaces",
+      "weight": 1.5,
+      "score": 3,
+      "justification": "Complete port tables with domain and reset (§7); the AHB-Lite subordinate has no HREADY input (F-006)."
+    },
+    {
+      "id": "clock_reset_cdc",
+      "weight": 1.5,
+      "score": 4,
+      "justification": "Every crossing has an ID and a structure (Table 6-2); quasi-static and reset assumptions rest on software rules (F-012, F-013)."
+    },
+    {
+      "id": "parameters",
+      "weight": 1.0,
+      "score": 4,
+      "justification": "Every parameter has a range, a default and an elaboration check (Table 5-1, §5); naming and base-address subtraction are observations (F-023)."
+    },
+    {
+      "id": "data_representation",
+      "weight": 0.5,
+      "score": 4,
+      "justification": "Bit, byte and word order, partial words and endianness are stated with a worked frame (§6.3, Table 6-5/6-6); no finding."
+    },
+    {
+      "id": "asic_feasibility",
+      "weight": 1.5,
+      "score": 1,
+      "justification": "Flop-based, no macro, no clock gating, pads from flops (§11.1, §7.6); DDR write data changes on the SCLK sampling edges (Blocker F-001)."
+    },
+    {
+      "id": "sdc_timing",
+      "weight": 1.5,
+      "score": 3,
+      "justification": "Clocks and exceptions are listed (Table 11-2/11-3); pad budgets are 40 % placeholders that hide the read round trip (F-003, F-014)."
+    },
+    {
+      "id": "area_power",
+      "weight": 1.0,
+      "score": 3,
+      "justification": "No area or power figure; reviewer proxy is about 4.4k flops with TX/RX FIFOs at about 46 % (F-019)."
+    },
+    {
+      "id": "performance",
+      "weight": 1.5,
+      "score": 2,
+      "justification": "Peak rates follow from the formula, but read capture limits SCLK (F-002) and the XIP cache is a single 32-byte stream buffer with unquantified miss latency (F-005)."
+    },
+    {
+      "id": "software_ease",
+      "weight": 1.0,
+      "score": 4,
+      "justification": "Register map, flows and error table are complete (§8, §9); silent BUSY-locked writes and CPU DMA residue add driver work (F-017, F-018)."
+    },
+    {
+      "id": "dft",
+      "weight": 1.0,
+      "score": 4,
+      "justification": "No DFT ports by decision DEC-021, all flops scan-eligible, no macros (§11.1); the test-mode contract for resets and clocks is not written (F-020)."
+    },
+    {
+      "id": "security_ras",
+      "weight": 1.0,
+      "score": 4,
+      "justification": "No access control, no ECC and no APB timeout, all stated as decisions (§3, DEC-020); accepted as waivers (F-015, F-016)."
+    },
+    {
+      "id": "verification_quality",
+      "weight": 1.5,
+      "score": 2,
+      "justification": "Good corner-case and assertion list (§10), but no requirement or test IDs, no coverage plan and no result; sim/ and lint/ are empty (F-011)."
+    },
+    {
+      "id": "documentation",
+      "weight": 0.5,
+      "score": 2,
+      "justification": "Consistent structure and figures, but conflicting clock frequencies (F-009) and 32 cited DEC/ASM/DEP IDs plus REF-002/006/008 not defined (F-010)."
+    },
+    {
+      "id": "integration_effort",
+      "weight": 1.0,
+      "score": 3,
+      "justification": "Table 11-4 lists the integrator duties; the AXI-to-AHB-Lite XIP bridge required by UIT Tesla is not specified (F-007)."
+    },
+    {
+      "id": "market_position",
+      "weight": 1.0,
+      "score": 3,
+      "justification": "Register model follows STM32 QUADSPI but without its sample shift and DDR hold delay; no read calibration as in DesignWare SSI or Cadence xSPI (F-024, F-002)."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "area": "asic_feasibility",
+      "severity": "Blocker",
+      "label": "INFERENCE",
+      "locator": "§7.6, Table 6-15, §11.2",
+      "title": "DDR output data changes on the same clk edge as every SCLK edge, so the flash sees zero hold time on address, alternate and data bits",
+      "detail": "FACT §7.6: 'In a DDR write phase it changes on the clk edge of every SCLK edge'; FACT Table 6-15: DDR launch strobe precedes every SCLK edge; FACT §11.2: 'The SCLK falling edge is not constrained for DDR write data'. INFERENCE: a DTR flash samples on both edges, so each bit is launched exactly at the edge that samples the previous bit; hold margin is only the pad/board skew between SCLK and IO, while DTR flash inputs require a positive hold time. Every DDR frame (CCR.DDRM=1) sends its address in DDR, so the DDR feature cannot work reliably.",
+      "action": "In m_qspi_edge_sel add a DDR launch strobe at the middle of each SCLK half period (a quarter SCLK period after the edge) and use it to load the output register in DDR write phases; restrict DDR to an even PRESCALER >= 2 so the midpoint is an integer clk count; constrain the DDR falling edge in the SDC."
+    },
+    {
+      "id": "F-002",
+      "area": "performance",
+      "severity": "Major",
+      "label": "INFERENCE",
+      "locator": "§3, Table 6-15, §11.2",
+      "title": "Read data is always captured half an SCLK period after the flash launch, with no sample shift or delay, so F/2 and probably F/4 reads cannot close",
+      "detail": "FACT §3 excludes 'programmable sample delay or delay-line calibration'; FACT Table 6-15: mode 0 SDR samples before the rising edge, half a period after the falling-edge launch. INFERENCE: the available time is one SCLK half period = PRESCALER clk cycles (1 clk = 5 ns at PRESCALER=0, 200 MHz) for SCLK pad out + board + flash tCLQV + board + pad in + setup. Typical serial-flash tCLQV is 6-7 ns (Intel EPCQ-A 6 ns, T25Q16BW 7 ns, sources in §19), so PRESCALER=0 fails and PRESCALER=2 (10 ns) is marginal; reads fall back to F/8 = 25 MHz.",
+      "action": "Add a CR.SSHIFT-like field (or a 3-bit DCR sample-delay in clk cycles) that delays the sample strobe of read phases by 1..N clk cycles, and state the maximum read SCLK per delay setting in §6.6.2."
+    },
+    {
+      "id": "F-003",
+      "area": "sdc_timing",
+      "severity": "Major",
+      "label": "FACT",
+      "locator": "§11.2, Table 11-2",
+      "title": "Pad IO delays are 40 % placeholders of the fastest SCLK period and the DDR falling edge is unconstrained, so synthesis cannot reveal F-001 or F-002",
+      "detail": "FACT §11.2: 'Every IO delay is a placeholder of 40 % of the clock period' (DEP-009, DEP-011) and 'The SCLK falling edge is not constrained for DDR write data'. INFERENCE: a placeholder input delay relative to SCLK does not model tCLQV plus the round trip, so the input path looks closed at F/2 while the silicon fails.",
+      "action": "Write the pad budget from a named flash (tCLQV, tDS/tDH, tCSS/tCSH) plus pad and board delays; add set_output_delay -clock_fall for DDR; state the SCLK limit the budget closes for SDR read, SDR write and DDR."
+    },
+    {
+      "id": "F-004",
+      "area": "functions",
+      "severity": "Major",
+      "label": "INFERENCE",
+      "locator": "§6.6.2, Table 6-14, Table 6-10, Table 8-3",
+      "title": "PRESCALER legality rules look stale after the V2.0 formula change: odd values are rejected in SDR and DDR allows only 2, 6, 10, ...",
+      "detail": "FACT §6.6.2: half period = PRESCALER clk cycles, 50 % duty for every value, yet PRESCALER must be even (SDR) and PRESCALER+2 a multiple of 4 (DDR); FACT Table 6-10 still words the rule as 'PRESCALER + 2 odd'; FACT revision history V2.0 'Corrected the SCLK frequency formula to the RTL'. INFERENCE: both rules match the old period PRESCALER+2 (even period for 50 % duty, period multiple of 4 for a quarter point), not the new 2xPRESCALER. Result at 200 MHz: SDR 100, 50, 25, 16.7 MHz (no 33 or 40 MHz); DDR 50, 16.7, 10 MHz; PRESCALER=1 would equal PRESCALER=0 but is rejected.",
+      "action": "Accept every PRESCALER in SDR (1..255, 0 kept as F/2) and every even PRESCALER >= 2 in DDR (with the F-001 midpoint launch); update the TEF check in m_qspi_reg_cfg, Table 6-10, Table 6-14 and Table 8-3."
+    },
+    {
+      "id": "F-005",
+      "area": "performance",
+      "severity": "Major",
+      "label": "INFERENCE",
+      "locator": "§6.4.3, §6.9, DEC-016, DEC-030",
+      "title": "The XIP cache is a single 32-byte stream buffer: every miss invalidates all lines, a NONSEQ miss fetches one word, HBURST is ignored and miss latency is not quantified",
+      "detail": "FACT §6.4.3: 'Every miss first invalidates all cache lines' (DEC-016), 'A NONSEQ miss fetches 1 word', a miss during a fetch waits for the whole prefetch; FACT §1.2: HBURST not connected. INFERENCE: a branch costs a full frame per word; a WRAP8 line refill starting mid-line costs three frames; loops larger than 32 bytes never hit. Estimated NONSEQ miss with EBh quad SDR, 24-bit address, PRESCALER=2: 8+6+2+4+8 = 28 SCLK = 112 clk plus CSS/CSH, two async FIFO crossings and the pad flops, about 130 clk = 650 ns per 4 bytes. The spec gives no number (§1.1 'reduces the read latency').",
+      "action": "Fetch an aligned block (PARA_PREFETCH_LENGTH words) on every miss, NONSEQ included, using HBURST to size it; replace invalidate-all with a FIFO or LRU replacement of aligned blocks; add a latency table (hit, NONSEQ miss, SEQ miss) to §6.4.3."
+    },
+    {
+      "id": "F-006",
+      "area": "interfaces",
+      "severity": "Major",
+      "label": "FACT",
+      "locator": "§1.2, Table 7-3, Table 11-4 (ASM-003)",
+      "title": "The AHB-Lite subordinate has no HREADY input and relies on the interconnect gating HSEL, a deviation from AMBA AHB (IHI 0033C)",
+      "detail": "FACT §1.2: 'There is no HREADY input (the interconnect gates HSEL)'; FACT Table 11-4 makes it an integrator requirement (ASM-003). INFERENCE: a standard AHB decoder drives HSEL from HADDR regardless of HREADY, so while another subordinate inserts wait states this IP samples the stalled address phase again and starts a duplicate or wrong fetch. AHB subordinates normally take HREADY as an input to qualify the address phase (IHI 0033C, HREADY signal description; clause number not verified by this review).",
+      "action": "Add input i_qspi_ahb_hready and accept an address phase only when HSEL & HREADY & HTRANS[1]; drop ASM-003 from Table 11-4."
+    },
+    {
+      "id": "F-007",
+      "area": "integration_effort",
+      "severity": "Major",
+      "label": "FACT",
+      "locator": "Table 11-4 (XIP bus row)",
+      "title": "UIT Tesla provides an AXI XIP connection but the IP has an AHB-Lite port; the required bridge is not specified",
+      "detail": "FACT Table 11-4: 'The UIT Tesla top provides an AXI XIP connection ... A bridge is needed before XIP can be used.' INFERENCE: the boot/XIP path (§1.1) depends on a block whose owner, burst mapping (WRAP refills, see F-005), error mapping (AHB ERROR to SLVERR), outstanding policy and latency are unknown, so XIP performance and boot cannot be signed off.",
+      "action": "Add a section that names the AXI-to-AHB-Lite bridge (or an AXI4 subordinate option), its owner, burst/WRAP conversion, response mapping, outstanding count and added latency."
+    },
+    {
+      "id": "F-008",
+      "area": "application_fit",
+      "severity": "Major",
+      "label": "FACT",
+      "locator": "§1.1, §2, §3 (ASM-015), §6.4.1",
+      "title": "Serial PSRAM is claimed as supported, but there are no memory-mapped writes and CSN can stay low without limit, violating PSRAM tCEM",
+      "detail": "FACT §2 lists serial PSRAM; FACT §3 excludes memory-mapped writes and tCEM enforcement (ASM-015); FACT §6.4.1: SCLK stops with CSN held low while a FIFO is empty or full. INFERENCE: a PSRAM is used as RAM, so without memory-mapped writes it is not usable as memory, and a stalled indirect frame keeps CSN low past tCEM, which blocks the PSRAM self-refresh and corrupts data.",
+      "action": "Either remove PSRAM from §1.1 and §2, or add memory-mapped write support plus a DLY-like maximum CSN-low counter that ends the frame at a byte boundary and restarts it."
+    },
+    {
+      "id": "F-009",
+      "area": "documentation",
+      "severity": "Major",
+      "label": "FACT",
+      "locator": "Table 6-1, Table 11-2, §9.6, Table 11-4",
+      "title": "Clock frequencies conflict: all clocks are 200 MHz in Table 6-1/11-2, but §9.6 and Table 11-4 use HCLK = 100 MHz and i_qspi_clk = 5 MHz; PRESCALER <= 54 gives 108, not 110, clk cycles",
+      "detail": "FACT Table 6-1 and Table 11-2: i_qspi_clk, PCLK, HCLK, DMA_CLK at 200 MHz; FACT §9.6: 'AHB timeout 2^20 HCLK cycles at 100 MHz, i_qspi_clk at 5 MHz'; FACT Table 11-4: '10.49 ms at 100 MHz'. INFERENCE: the AHB timeout limit and the PRESCALER <= 54 rule are derived from a configuration that the frequency table does not describe; at 200 MHz HCLK the timeout is 5.24 ms and the limit changes. 2 x 54 = 108 clk cycles (Table 8-19 formula).",
+      "action": "State one UIT Tesla delivery clock plan, recompute the AHB timeout and the memory-mapped PRESCALER limit from it with the frame length used, and correct the 110/108 arithmetic."
+    },
+    {
+      "id": "F-010",
+      "area": "documentation",
+      "severity": "Major",
+      "label": "FACT",
+      "locator": "Table 1-1, §4, §5, §8, Appendix B",
+      "title": "REF-002/006/008, the source design specification and 32 cited DEC/ASM/DEP items are not defined in the document; no requirement IDs; the review table is empty",
+      "detail": "FACT Table 1-1 lists REF-001/003/005/010 only, while figures cite REF-002, Table 5-1 REF-006 and §8 REF-008 (the register authority); FACT 18 DEC, 11 ASM and 3 DEP identifiers are cited (inventory.json) and §1.1 says DEC decisions override the sources, but none is listed; FACT Appendix B has no reviewer for V1.0 to V2.0; the title says V1.0 while the history reaches V2.0.",
+      "action": "Add REF-002/006/008 and UIT-Tesla-QSPI-SPEC v0.2 to Table 1-1, append DEC/ASM/DEP tables with status and owner, add REQ-nnn IDs to normative statements, and set the title to V2.0."
+    },
+    {
+      "id": "F-011",
+      "area": "verification_quality",
+      "severity": "Major",
+      "label": "FACT",
+      "locator": "§10, Table 10-1",
+      "title": "No requirement-to-test traceability, no coverage plan, no flash model named and no verification result; sim/ and lint/ are empty",
+      "detail": "FACT §10 lists corner cases, key assertions and five configurations, but inventory.json finds 0 requirements and 0 test IDs; FACT the rtl/qspi folders sim/, lint/, logical/, syn/ contain only .gitkeep. INFERENCE: the list is a good test-plan seed, but no closure can be measured, and the DDR/read-timing issues (F-001, F-002) are invisible to an RTL-only flash model unless it checks setup/hold.",
+      "action": "Give each §10 bullet a TEST-nnn ID mapped to REQ-nnn, name the flash model and require it to check tDS/tDH and tCLQV, list functional coverage bins, and add the regression status per configuration of Table 10-1."
+    },
+    {
+      "id": "F-012",
+      "area": "clock_reset_cdc",
+      "severity": "Minor",
+      "label": "INFERENCE",
+      "locator": "Table 6-2 CDC-005 (ASM-007)",
+      "title": "DCR.FSIZE and the memory-mapped enable cross to HCLK through per-bit 2-flop synchronizers, safe only under a software rule",
+      "detail": "FACT CDC-005 is valid 'because the source changes only while no AHB access is in progress (ASM-007)'. INFERENCE: nothing in hardware enforces it; another AHB manager, or a CPU still fetching XIP code, can see a mixed FSIZE value for one HCLK cycle and pass or fail the range check wrongly.",
+      "action": "Carry FSIZE with the enable through a request/acknowledge handshake (data held in the clk domain, captured in HCLK on the synchronized toggle), or hold memory-mapped mode off in HCLK until the new FSIZE is stable."
+    },
+    {
+      "id": "F-013",
+      "area": "clock_reset_cdc",
+      "severity": "Minor",
+      "label": "INFERENCE",
+      "locator": "§6.2, Table 6-3 (ASM-002, ASM-012, ASM-014)",
+      "title": "Reset assumptions conflict and no RDC analysis is given for the four reset domains",
+      "detail": "FACT §6.2: partial reset 'is not supported (ASM-002)', yet the same section specifies AHB and APB behaviour 'while the core domain is in reset' and allows release in any order. INFERENCE: the async FIFOs and pulse synchronizers span two reset domains; with release in any order a source-side pointer or toggle can change while the destination is still in reset. The behaviour is probably safe, but it is not shown.",
+      "action": "Add an RDC table: each crossing, its two resets, the state at release in each order, and why no spurious word or pulse is produced; reconcile ASM-002 with the core-in-reset sentences."
+    },
+    {
+      "id": "F-014",
+      "area": "sdc_timing",
+      "severity": "Minor",
+      "label": "INFERENCE",
+      "locator": "Table 11-3 EXC-001, EXC-002",
+      "title": "set_clock_groups -allow_paths is tool-specific and the Gray-pointer crossings have no skew constraint",
+      "detail": "FACT EXC-001 uses set_clock_groups -asynchronous -allow_paths, EXC-002 a set_max_delay of one destination period. INFERENCE: -allow_paths is not portable to every STA tool; a max delay that includes clock latency is not a bus-skew limit on Gray-coded pointers.",
+      "action": "State the STA tool; use set_max_delay -ignore_clock_latency (or -datapath_only) and add a skew constraint (set_data_check or set_bus_skew) on each Gray pointer bus."
+    },
+    {
+      "id": "F-015",
+      "area": "security_ras",
+      "severity": "Minor",
+      "label": "FACT",
+      "locator": "§3, §7.2, Table 11-4 (DEC-020)",
+      "title": "No APB timeout: an APB access while i_qspi_clk is stopped or in reset hangs the CPU bus",
+      "detail": "FACT §7.2: 'There is no timeout'; FACT Table 11-4 forbids register access while i_qspi_clk is stopped. INFERENCE: one firmware error becomes a system hang recoverable only by a watchdog. Accepted as a recorded decision.",
+      "action": "DEC-020 is a closed decision and the CRM rule in Table 11-4 removes the trigger."
+    },
+    {
+      "id": "F-016",
+      "area": "security_ras",
+      "severity": "Minor",
+      "label": "FACT",
+      "locator": "§3, §1.1",
+      "title": "No access control, register lock or integrity check on the boot/XIP path",
+      "detail": "FACT §3 excludes ECC/parity and PPROT/HPROT filtering; FACT §1.1 makes the IP the boot and code-storage path. INFERENCE: any APB manager can issue erase commands and XIP code is executed without integrity; acceptable when UIT Tesla has no secure-boot requirement.",
+      "action": "The exclusion is stated, and UIT Tesla states no secure-boot or untrusted-manager requirement."
+    },
+    {
+      "id": "F-017",
+      "area": "software_ease",
+      "severity": "Minor",
+      "label": "FACT",
+      "locator": "§8.1, §7.2, §9.7",
+      "title": "Writes to BUSY-locked fields are silently dropped with no flag",
+      "detail": "FACT §8.1: 'A write while BUSY = 1 is ignored for those fields'; FACT §9.7 asks software to read back after every write. INFERENCE: every driver write to CR/DCR/CCR/DLR/DLY needs a read-back, doubling the APB cost of configuration and hiding race bugs.",
+      "action": "Add a sticky SR.WLKF (write-locked) flag, cleared through FCR, set when a write hits a BUSY-locked field."
+    },
+    {
+      "id": "F-018",
+      "area": "software_ease",
+      "severity": "Minor",
+      "label": "FACT",
+      "locator": "§6.4.4, §9.3 (DEC-029, ASM-013)",
+      "title": "DMA moves whole bursts only; the CPU must move the residue and a DMA channel programmed for it waits forever",
+      "detail": "FACT §6.4.4 'Only whole bursts are requested (DEC-029)'; FACT §9.3 'A DMA channel programmed for such a residue would wait forever (ASM-013)'. INFERENCE: every DMA transfer needs a CPU tail, so DMA does not offload short or odd-length transfers.",
+      "action": "Raise the request for the last partial burst when the remaining words are fewer than the threshold (TX: remaining bytes to write; RX: frame complete and RX FIFO not empty), with the DMA programmed by word count."
+    },
+    {
+      "id": "F-019",
+      "area": "area_power",
+      "severity": "Major",
+      "label": "INFERENCE",
+      "locator": "§11.1, §6.10, Table 5-1",
+      "title": "No area or power figure; the reviewer proxy is about 4.4k flops, with the TX/RX FIFOs about 46 % while the XIP cache is 8 words",
+      "detail": "FACT §11.1: standard cells only, no memory macros, no clock-gating cells; FACT §6.10: FIFOs are flops. INFERENCE (proxy, defaults): TX+RX FIFO 2048, cache 520, AHB async FIFOs 552, APB async FIFOs 328, registers about 350, frame latch about 130, shifter about 200, counters about 210, synchronizers about 80: about 4.4k flops, roughly 30-40 kGE assuming 6 GE per flop plus read multiplexers; no library, not mapped. Without clock gating all flops toggle at 200 MHz.",
+      "action": "Add an area/power table (proxy now, mapped with the UIT Tesla library later), allow synthesis clock-gating insertion, and reconsider 32-word FIFOs against a larger XIP cache for UIT Tesla."
+    },
+    {
+      "id": "F-020",
+      "area": "dft",
+      "severity": "Minor",
+      "label": "INFERENCE",
+      "locator": "§3, Table 11-4 (DEC-021)",
+      "title": "The DFT contract for the four clocks, four async resets and the pad capture flop is not written",
+      "detail": "FACT DEC-021: no DFT ports, all flops scan-eligible. INFERENCE: scan needs top-level control of every async reset, one scan clock per domain or a test-clock mux at the CRM, and the synchronizer flops in the scan chains; the SoC DFT team needs these listed.",
+      "action": "Add a DFT table: reset controllability, clock sources in scan mode, synchronizer handling, pad IO in scan mode, expected coverage exclusions."
+    },
+    {
+      "id": "F-021",
+      "area": "functions",
+      "severity": "Observation",
+      "label": "FACT",
+      "locator": "§6.4.6, §6.6.3, Table 8-19",
+      "title": "Abort raises CSN mid-byte without the CSN hold time and reports the same TCF as a normal completion",
+      "detail": "FACT §6.4.6: CSN goes high without DLY.CSH; TCF = 1 on abort. INFERENCE: flash devices discard a partial command, so this is acceptable, but software cannot tell abort from completion from SR alone.",
+      "action": "Same behaviour as STM32 QUADSPI; software knows it issued the abort."
+    },
+    {
+      "id": "F-022",
+      "area": "interfaces",
+      "severity": "Observation",
+      "label": "FACT",
+      "locator": "§7.4, Table 7-4 (ASM-005)",
+      "title": "The DMA req/clr handshake is custom and the target DMA controller is not named",
+      "detail": "FACT §7.4: level req, clr pulse after all APB accesses of the burst (ASM-005). INFERENCE: interoperability depends on the UIT Tesla DMA controller implementing exactly this handshake.",
+      "action": "The handshake is fully specified and the integrator duty is in Table 11-4."
+    },
+    {
+      "id": "F-023",
+      "area": "parameters",
+      "severity": "Observation",
+      "label": "FACT",
+      "locator": "Table 5-1 rows 6, 13, 14; §7.3",
+      "title": "PARA_AHB_SYNC_FIFO_DEPTH sizes async FIFOs, and the IP subtracts base addresses that an interconnect normally removes",
+      "detail": "FACT Table 5-1 row 6 describes 'AHB control and data async FIFOs'; FACT §7.3: below-base addresses wrap and pass the range check when FSIZE = 31. INFERENCE: naming misleads, and a 32-bit subtractor sits in the AHB address path.",
+      "action": "Defaults of 0 remove the subtractor's effect and the wrap case is documented."
+    },
+    {
+      "id": "F-024",
+      "area": "market_position",
+      "severity": "Observation",
+      "label": "INFERENCE",
+      "locator": "§8.2 Table 8-2, Table 8-3, Table 8-15",
+      "title": "Register offsets mirror STM32 QUADSPI but bit positions and PTR meaning differ, and its SSHIFT/DHQC timing features are absent",
+      "detail": "FACT Table 8-2: CR..PIR at 0x00..0x2C in the STM32 QUADSPI order, but CR bit fields differ (Table 8-3) and PTR is a polling timeout (Table 8-15). INFERENCE (STM32 layout from public reference manuals, §19): a developer may reuse an STM32 driver and get wrong behaviour; the two STM32 features that solve F-001/F-002 are missing.",
+      "action": "State in §8 that the map is STM32-inspired but not compatible, list the differences, and adopt the sample-shift and DDR-hold fields of F-001/F-002."
+    }
+  ]
+}
